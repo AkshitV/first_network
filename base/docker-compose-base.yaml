@@ -1,0 +1,89 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer1.supplychain.com:
+    container_name: orderer1.supplychain.com
+    extends:
+      file: peer-base.yaml
+      service: orderer-base
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../crypto-config/ordererOrganizations/supplychain.com/orderers/orderer1.supplychain.com/msp:/var/hyperledger/orderer/msp
+        - ../crypto-config/ordererOrganizations/supplychain.com/orderers/orderer1.supplychain.com/tls/:/var/hyperledger/orderer/tls
+        - orderer1.supplychain.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.manufacturer.supplychain.com:
+    container_name: peer0.manufacturer.supplychain.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.manufacturer.supplychain.com
+      - CORE_PEER_ADDRESS=peer0.manufacturer.supplychain.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.manufacturer.supplychain.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      # - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.manufacturer.supplychain.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.manufacturer.supplychain.com:7051
+      - CORE_PEER_LOCALMSPID=ManufacturerMSPId
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/manufacturer.supplychain.com/peers/peer0.manufacturer.supplychain.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/manufacturer.supplychain.com/peers/peer0.manufacturer.supplychain.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.manufacturer.supplychain.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+
+  peer0.distributor.supplychain.com:
+    container_name: peer0.distributor.supplychain.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.distributor.supplychain.com
+      - CORE_PEER_ADDRESS=peer0.distributor.supplychain.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.distributor.supplychain.com:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.distributor.supplychain.com:9051
+      # - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.distributor.supplychain.com:10051
+      - CORE_PEER_LOCALMSPID=DistributorMSPId
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/distributor.supplychain.com/peers/peer0.distributor.supplychain.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/distributor.supplychain.com/peers/peer0.distributor.supplychain.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.distributor.supplychain.com:/var/hyperledger/production
+    ports:
+      - 9051:9051
+
+  peer0.retailer.supplychain.com:
+    container_name: peer0.retailer.supplychain.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.retailer.supplychain.com
+      - CORE_PEER_ADDRESS=peer0.retailer.supplychain.com:11051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.retailer.supplychain.com:11052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.retailer.supplychain.com:11051
+      # - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.retailer.supplychain.com:12051
+      - CORE_PEER_LOCALMSPID=RetailerMSPId
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/retailer.supplychain.com/peers/peer0.retailer.supplychain.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/retailer.supplychain.com/peers/peer0.retailer.supplychain.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.retailer.supplychain.com:/var/hyperledger/production
+    ports:
+      - 11051:11051
+
